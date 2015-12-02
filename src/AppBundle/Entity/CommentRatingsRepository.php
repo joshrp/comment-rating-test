@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\CommentRating;
+
 /**
  * CommentRatingsRepository
  *
@@ -10,4 +12,29 @@ namespace AppBundle\Entity;
  */
 class CommentRatingsRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function addNewVote($params) {
+        $em = $this->getEntityManager();
+
+        $rating = new CommentRating();
+        $rating->setValue($params['value']);
+        $rating->setCommentId($params['comment_id']);
+        $rating->setUserId($params['user_id']);
+
+        $em->persist($rating);
+        return $em->flush();
+    }
+
+    public function getRatingForComment($commentId) {
+        $em = $this->getEntityManager();
+        $query = $em->createQueryBuilder()
+            ->select(array(
+                'count( r.value ) as voteCount',
+                'sum( r.value ) as total'
+            ))->from('AppBundle:CommentRating', 'r')
+            ->where('r.comment_id = :comment_id')
+            ->getQuery()
+            ->setParameter('comment_id', $commentId);
+
+        return $query->getResult();
+    }
 }

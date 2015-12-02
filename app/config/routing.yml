@@ -1,3 +1,9 @@
-app:
-    resource: "@AppBundle/Controller/"
-    type:     annotation
+comment:
+    path:     /api/post_comments/rating
+    defaults: { _controller: AppBundle:CommentsRating:fetch }
+    methods:  [GET]
+
+rate_comment:
+    path:     /api/post_comments/rating
+    defaults: { _controller: AppBundle:CommentsRating:rate }
+    methods:  [POST]
